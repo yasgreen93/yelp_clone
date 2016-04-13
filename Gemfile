@@ -26,6 +26,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'haml-rails', '~> 0.9'
 
 gem 'devise'
+gem 'omniauth-facebook'
+gem 'dotenv'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
