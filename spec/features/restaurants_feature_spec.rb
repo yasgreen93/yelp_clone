@@ -83,4 +83,12 @@ feature 'restaurants' do
       expect(page).to have_content 'error'
     end
   end
+
+  context 'validation duplicate restaurants' do
+    it 'is not valid unless it has a unique name' do
+      Restaurant.create(name: 'nice restaurant')
+      restaurant = Restaurant.new(name: 'nice restaurant')
+      expect(restaurant).to have(1).error_on(:name)
+    end
+  end
 end
