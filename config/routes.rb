@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :restaurants do
     resources :reviews
   end
-
+  root "restaurants#index"
 
 
   # The priority is based upon order of creation: first created -> highest priority.
