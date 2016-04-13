@@ -1,10 +1,20 @@
 class RestaurantsController < ApplicationController
+
+  before_action :authenticate_user!, :except => [:index, :show]
+
   def index
     @restaurants = Restaurant.all
   end
 
   def new
-    @restaurant = Restaurant.new
+    # @restaurant = Restaurant.new
+    # user = User.first(email: params[:email])
+
+    if !user_signed_in?
+      flash[:notice] = "Cannot add restaurant: you must be logged in"
+    else
+      @restaurant = Restaurant.new
+    end
   end
 
   def create
