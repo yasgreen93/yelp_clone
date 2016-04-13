@@ -117,6 +117,12 @@ feature "restaurants" do
      expect(page).not_to have_content 'Kentucky Fried Chicken'
      expect(current_path).to eq '/restaurants'
     end
+
+    scenario 'only lets users delete their own restaurant' do
+     visit '/restaurants'
+     click_link 'Sign out'
+     expect(page).to_not have_content 'Delete'
+    end
   end
 
 
