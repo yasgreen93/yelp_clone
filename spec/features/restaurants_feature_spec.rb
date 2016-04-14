@@ -2,8 +2,15 @@ require 'rails_helper'
 
 feature 'restaurants' do
   context 'no restaurants have been added' do
-    scenario 'should display a prompt to add a restaurant' do
-      visit '/restaurants'
+    before do
+      visit('/')
+      click_link('Sign up')
+      fill_in('Email', with: 'test@example.com')
+      fill_in('Password', with: 'testtest')
+      fill_in('Password confirmation', with: 'testtest')
+      click_button('Sign up')
+    end
+    scenario 'should display a prompt to add a restaurant (when signed in)' do
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
@@ -23,12 +30,23 @@ feature 'restaurants' do
 
   context 'creating restaurants' do
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      visit '/restaurants'
+      visit('/')
+      click_link('Sign up')
+      fill_in('Email', with: 'test@example.com')
+      fill_in('Password', with: 'testtest')
+      fill_in('Password confirmation', with: 'testtest')
+      click_button('Sign up')
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
+    end
+
+    scenario 'user cannot add a restaurant when not signed in' do
+      visit '/'
+      expect(page).not_to have_link('Add a restaurant')
+      expect(page).to have_content('To add a restaurant please sign in or sign up!')
     end
   end
 
@@ -75,7 +93,12 @@ feature 'restaurants' do
 
   context 'an invalid restaurant' do
     it 'does not let you submit a name that is too short' do
-      visit '/restaurants'
+      visit('/')
+      click_link('Sign up')
+      fill_in('Email', with: 'test@example.com')
+      fill_in('Password', with: 'testtest')
+      fill_in('Password confirmation', with: 'testtest')
+      click_button('Sign up')
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'kf'
       click_button 'Create Restaurant'
