@@ -34,6 +34,11 @@ feature 'restaurants' do
       expect(page).to have_content('You need to sign in or sign up before continuing.')
       expect(page).to have_content('Log in')
     end
+
+    scenario 'restaurant should belong to current_user' do
+      sign_up_create_restaurant
+      expect(created_restaurant('KFC')).to eq(true)
+    end
   end
 
   context 'viewing restaurants' do
