@@ -7,9 +7,6 @@ class RestaurantsController < ApplicationController
   end
 
   def new
-    # @restaurant = Restaurant.new
-    # user = User.first(email: params[:email])
-
     if !user_signed_in?
       flash[:notice] = "Cannot add restaurant: you must be logged in"
     else
@@ -18,7 +15,8 @@ class RestaurantsController < ApplicationController
   end
 
   def create
-    @restaurant = Restaurant.new(restaurant_params)
+    @user = User.find(current_user.id)
+    @restaurant = @user.restaurants.new(restaurant_params)
     if @restaurant.save
       redirect_to restaurants_path
     else
@@ -36,9 +34,13 @@ class RestaurantsController < ApplicationController
 
   def update
     @restaurant = Restaurant.find(params[:id])
-    @restaurant.update(restaurant_params)
-
-    redirect_to '/restaurants'
+    if current_user.has_restaurant? @restaurant
+      @restaurant.update(restaurant_params)
+      redirect_to '/restaurants'
+    else
+      redirect_to '/restaurants'
+      flash[:notice] = "You cannot edit this restaurant"
+    end
   end
 
   def restaurant_params

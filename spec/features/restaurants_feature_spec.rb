@@ -1,4 +1,5 @@
 require "rails_helper"
+require "pry"
 
 feature "restaurants" do
   context "no restaurants have been added" do
@@ -11,7 +12,8 @@ feature "restaurants" do
 
   context 'restaurants have been added' do
     before do
-      Restaurant.create(name: 'KFC')
+      sign_up
+      create_restaurant
     end
 
     scenario 'display restaurants' do
@@ -57,47 +59,53 @@ feature "restaurants" do
 
   context 'viewing restaurants' do
 
-    let!(:kfc){Restaurant.create(name:'KFC')}
+    before do
+      sign_up
+      create_restaurant
+    end
 
     scenario 'lets a user view a restaurant' do
      visit '/restaurants'
      click_link 'KFC'
      expect(page).to have_content 'KFC'
-     expect(current_path).to eq "/restaurants/#{kfc.id}"
+     expect(current_path).to eq "/restaurants/#{Restaurant.first.id}"
     end
   end
 
   context 'editing restaurants' do
-
-  before { Restaurant.create name: 'KFC' }
-  before do
-    visit('/')
-    click_link('Sign up')
-    fill_in('Email', with: 'test@example.com')
-    fill_in('Password', with: 'testtest')
-    fill_in('Password confirmation', with: 'testtest')
-    click_button('Sign up')
-  end
-
+    # before do
+    #   sign_up
+    #   create_restaurant
+    # end
 
     scenario 'let a user edit a restaurant' do
-     visit '/restaurants'
+      sign_up
+      create_restaurant
      click_link 'Edit KFC'
      fill_in 'Name', with: 'Kentucky Fried Chicken'
      click_button 'Update Restaurant'
      expect(page).to have_content 'Kentucky Fried Chicken'
      expect(current_path).to eq '/restaurants'
     end
+
+    scenario 'only lets users edit their own restaurant' do
+      sign_up
+      create_restaurant
+      click_link 'Sign out'
+      sign_up_2
+      click_link 'Edit KFC'
+      click_button 'Update Restaurant'
+      expect(page).to have_content "You cannot edit this restaurant"
+    end
   end
 
   context 'deleting restaurants' do
-  before do
-    sign_up
-    create_restaurant
-  end
+    before do
+      sign_up
+      create_restaurant
+    end
 
-
-    scenario 'let a user edit a restaurant' do
+    scenario 'let a user delete a restaurant' do
      click_link 'Delete'
      expect(page).not_to have_content 'Kentucky Fried Chicken'
      expect(current_path).to eq '/restaurants'

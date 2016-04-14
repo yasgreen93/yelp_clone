@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
   end
 
   def has_restaurant?(restaurant)
-    id == restaurant.user_id
+    if id == restaurant.user_id
+      true
+    else
+      false
+    end
   end
 end
