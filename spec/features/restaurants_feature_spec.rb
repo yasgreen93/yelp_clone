@@ -24,19 +24,11 @@ feature "restaurants" do
   context 'creating restaurants' do
     context 'while signed in' do
       before do
-        visit('/')
-        click_link('Sign up')
-        fill_in('Email', with: 'test@example.com')
-        fill_in('Password', with: 'testtest')
-        fill_in('Password confirmation', with: 'testtest')
-        click_button('Sign up')
+        sign_up
       end
 
       scenario 'prompts user to fill out a form, then displays the new restaurant' do
-        visit '/restaurants'
-        click_link 'Add a restaurant'
-        fill_in 'Name', with: 'KFC'
-        click_button 'Create Restaurant'
+        create_restaurant
         expect(page).to have_content 'KFC'
         expect(current_path).to eq '/restaurants'
       end
@@ -99,29 +91,23 @@ feature "restaurants" do
   end
 
   context 'deleting restaurants' do
-
-  before { Restaurant.create name: 'KFC' }
   before do
-    visit('/')
-    click_link('Sign up')
-    fill_in('Email', with: 'test@example.com')
-    fill_in('Password', with: 'testtest')
-    fill_in('Password confirmation', with: 'testtest')
-    click_button('Sign up')
+    sign_up
+    create_restaurant
   end
 
 
     scenario 'let a user edit a restaurant' do
-     visit '/restaurants'
      click_link 'Delete'
      expect(page).not_to have_content 'Kentucky Fried Chicken'
      expect(current_path).to eq '/restaurants'
     end
 
     scenario 'only lets users delete their own restaurant' do
-     visit '/restaurants'
      click_link 'Sign out'
-     expect(page).to_not have_content 'Delete'
+     sign_up_2
+     click_link 'Delete'
+     expect(page).to have_content "You cannot delete this restaurant"
     end
   end
 
