@@ -2,15 +2,8 @@ require 'rails_helper'
 
 feature 'restaurants' do
   context 'no restaurants have been added' do
-    before do
-      visit('/')
-      click_link('Sign up')
-      fill_in('Email', with: 'test@example.com')
-      fill_in('Password', with: 'testtest')
-      fill_in('Password confirmation', with: 'testtest')
-      click_button('Sign up')
-    end
     scenario 'should display a prompt to add a restaurant (when signed in)' do
+      sign_up
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
@@ -30,12 +23,7 @@ feature 'restaurants' do
 
   context 'creating restaurants' do
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      visit('/')
-      click_link('Sign up')
-      fill_in('Email', with: 'test@example.com')
-      fill_in('Password', with: 'testtest')
-      fill_in('Password confirmation', with: 'testtest')
-      click_button('Sign up')
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
@@ -45,8 +33,9 @@ feature 'restaurants' do
 
     scenario 'user cannot add a restaurant when not signed in' do
       visit '/'
-      expect(page).not_to have_link('Add a restaurant')
-      expect(page).to have_content('To add a restaurant please sign in or sign up!')
+      click_link 'Add a restaurant'
+      expect(page).to have_content('You need to sign in or sign up before continuing.')
+      expect(page).to have_content('Log in')
     end
   end
 
@@ -66,7 +55,7 @@ feature 'restaurants' do
     before { Restaurant.create name: 'KFC' }
 
     scenario 'let a user edit a restaurant' do
-      visit '/restaurants'
+      sign_up
       click_link 'Edit KFC'
       fill_in 'Name', with: 'Kentucky Fried Chicken'
       click_button 'Update Restaurant'
@@ -84,7 +73,7 @@ feature 'restaurants' do
     end
 
     scenario 'removes a restaurant and associated reviews when a user clicks a delete link' do
-      visit '/restaurants'
+      sign_up
       click_link 'Delete KFC'
       expect(page).not_to have_content 'KFC'
       expect(page).to have_content 'Restaurant deleted successfully'
@@ -93,12 +82,7 @@ feature 'restaurants' do
 
   context 'an invalid restaurant' do
     it 'does not let you submit a name that is too short' do
-      visit('/')
-      click_link('Sign up')
-      fill_in('Email', with: 'test@example.com')
-      fill_in('Password', with: 'testtest')
-      fill_in('Password confirmation', with: 'testtest')
-      click_button('Sign up')
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'kf'
       click_button 'Create Restaurant'
