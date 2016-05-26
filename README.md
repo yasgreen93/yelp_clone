@@ -39,4 +39,4 @@ rails s
 Then in your browser visit:  
 [http://localhost:3000/](http://localhost:3000/)
 
-*** Yasmin Green ***
+***Yasmin Green***
